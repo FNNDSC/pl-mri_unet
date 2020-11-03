@@ -26,6 +26,26 @@ MAINTAINER fnndsc "dev@babymri.org"
 
 WORKDIR /usr/local/src
 COPY . .
+# Add NVIDIA package repositories
+RUN apt install -y wget
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.1.243-1_amd64.deb
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+RUN dpkg -i cuda-repo-ubuntu1804_10.1.243-1_amd64.deb
+RUN apt-get update
+#RUN wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo- ubuntu1804_1.0.0-1_amd64.deb
+#RUN apt install ./nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+RUN apt-get update
+
+# Install NVIDIA driver
+RUN apt-get install -y --no-install-recommends nvidia-driver-450
+# Reboot. Check that GPUs are visible using the command: nvidia-smi
+
+# Install development and runtime libraries (~4GB)
+RUN apt-get install -y --no-install-recommends \
+    cuda-10-1 
+    #libcudnn7=7.6.5.32-1+cuda10.1  \
+    #libcudnn7-dev=7.6.5.32-1+cuda10.1
+
 RUN apt install python3-dev python3-pip
 RUN pip install -U pip numpy wheel
 RUN pip install -U keras_preprocessing --no-deps
